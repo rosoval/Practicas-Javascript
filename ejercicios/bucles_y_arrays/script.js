@@ -1,6 +1,6 @@
 //ejrcicio 1
 let suma = 0;
-for( let i = 0; i < 55; i++ ){
+for( let i = 0; i <= 10; i++ ){
     suma += i;
     
 }
