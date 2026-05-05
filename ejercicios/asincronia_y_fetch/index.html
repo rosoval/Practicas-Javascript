@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Pokémon</h1>
+<ul id="pokemon-list"> </ul>
+</body>
+</html>
+<script>
+const pokemonList = document.getElementById('pokemon-list');
+function obtenerDatos(pokemonlist) {
+
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=10')
+        .then(respuesta => respuesta.json()) 
+        .then(datos => {
+          
+const pokemons = datos.results.slice(0, 10); 
+pokemons.forEach(pokemon => {
+    const li = document.createElement('li');
+    li.textContent = "Nombre: " + pokemon.name;
+    pokemonlist.appendChild(li);
+});
+    })
+    .catch(error => console.error("Hubo un error:", error));
+}
+
+obtenerDatos(pokemonList);
+
+
+
+</script>
