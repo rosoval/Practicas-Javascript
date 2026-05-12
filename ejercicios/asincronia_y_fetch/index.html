@@ -6,30 +6,64 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Pokémon</h1>
-<ul id="pokemon-list"> </ul>
+ <h1>Pokémon</h1>
+ <input type="text" id="pokemon-input" placeholder="Escribe el nombre del Pokémon">
+<button onclick="pokemon()">Buscar Pokémon</button>
+ <ul id="pokemon-list"> </ul>
 </body>
 </html>
 <script>
+const pokemonInput = document.getElementById('pokemon-input');
 const pokemonList = document.getElementById('pokemon-list');
+function pokemon() {
+    const pokemonName = pokemonInput.value.trim().toLowerCase();
+    if (pokemonName) {
+        fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Pokémon no encontrado');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const resultadoPrevio = pokemonList.querySelector('li.resultado-busqueda');
+                if (resultadoPrevio) {
+                    resultadoPrevio.remove();
+                }
+                const li = document.createElement('li');
+                li.className = 'resultado-busqueda';
+                li.textContent = `Nombre: ${data.name}, Altura: ${data.height}, Peso: ${data.weight}, habilidades: ${data.abilities.map(ability => ability.ability.name).join(', ')}`;
+                pokemonList.prepend(li);
+            })
+            .catch(error => console.error("Hubo un error:", error));
+    } else {
+        alert("Por favor, ingresa el nombre de un Pokémon.");
+    }
+
+
+}  
+
+
+
+
 function obtenerDatos(pokemonlist) {
 
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=10')
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=152')
         .then(respuesta => respuesta.json()) 
         .then(datos => {
           
-const pokemons = datos.results.slice(0, 10); 
+const pokemons = datos.results.slice(0, 151);
 pokemons.forEach(pokemon => {
     const li = document.createElement('li');
     li.textContent = "Nombre: " + pokemon.name;
     pokemonlist.appendChild(li);
 });
-    })
-    .catch(error => console.error("Hubo un error:", error));
+        })
+        .catch(error => console.error("Hubo un error:", error));
 }
-
 obtenerDatos(pokemonList);
 
 
-
 </script>
+</body>
+</html>
