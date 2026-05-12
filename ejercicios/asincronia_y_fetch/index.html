@@ -9,15 +9,19 @@
  <h1>Pokémon</h1>
  <input type="text" id="pokemon-input" placeholder="Escribe el nombre del Pokémon">
 <button onclick="pokemon()">Buscar Pokémon</button>
+ <div id="loading" style="display:none; color: blue; font-weight: bold;">Cargando...</div>
  <ul id="pokemon-list"> </ul>
 </body>
 </html>
 <script>
 const pokemonInput = document.getElementById('pokemon-input');
 const pokemonList = document.getElementById('pokemon-list');
+const loading = document.getElementById('loading');
 function pokemon() {
     const pokemonName = pokemonInput.value.trim().toLowerCase();
     if (pokemonName) {
+        loading.style.display = 'block';
+        const inicioTiempo = Date.now();
         fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
             .then(response => {
                 if (!response.ok) {
@@ -26,14 +30,20 @@ function pokemon() {
                 return response.json();
             })
             .then(data => {
-                const resultadoPrevio = pokemonList.querySelector('li.resultado-busqueda');
-                if (resultadoPrevio) {
-                    resultadoPrevio.remove();
-                }
-                const li = document.createElement('li');
-                li.className = 'resultado-busqueda';
-                li.textContent = `Nombre: ${data.name}, Altura: ${data.height}, Peso: ${data.weight}, habilidades: ${data.abilities.map(ability => ability.ability.name).join(', ')}`;
-                pokemonList.prepend(li);
+                const tiempoTranscurrido = Date.now() - inicioTiempo;
+                const tiempoRestante = Math.max(0, 500 - tiempoTranscurrido);
+                
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    const resultadoPrevio = pokemonList.querySelector('li.resultado-busqueda');
+                    if (resultadoPrevio) {
+                        resultadoPrevio.remove();
+                    }
+                    const li = document.createElement('li');
+                    li.className = 'resultado-busqueda';
+                    li.textContent = `Nombre: ${data.name}, Altura: ${data.height}, Peso: ${data.weight}, habilidades: ${data.abilities.map(ability => ability.ability.name).join(', ')}`;
+                    pokemonList.prepend(li);
+                }, tiempoRestante);
             })
             .catch(error => console.error("Hubo un error:", error));
     } else {
